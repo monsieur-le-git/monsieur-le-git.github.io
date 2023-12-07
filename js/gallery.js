@@ -17,18 +17,30 @@ function upDate(previewPic){
    
    }
  
-   function unDo(){
-      /* In this function you should 
-     1) Update the url for the background image of the div with the id = "image" 
-     back to the orginal-image.  You can use the css code to see what that original URL was
-     
-     2) Change the text  of the div with the id = "image" 
-     back to the original text.  You can use the html code to see what that original text was
-     */
-     
-     target = document.querySelector("#image")
- 
-     target.innerHTML = "Hover over an image below to display here."
- 
-     target.style.backgroundImage = 'url("")'		
-   }
+function unDo(){
+  /* In this function you should 
+  1) Update the url for the background image of the div with the id = "image" 
+  back to the orginal-image.  You can use the css code to see what that original URL was
+  
+  2) Change the text  of the div with the id = "image" 
+  back to the original text.  You can use the html code to see what that original text was
+  */
+  
+  target = document.querySelector("#image")
+
+  target.innerHTML = "Hover over an image below to display here."
+
+  target.style.backgroundImage = 'url("")'		
+}
+
+function celebrateLoad(){
+  console.log("Hooray")
+}
+
+document.addEventListener("onload", celebrateLoad())
+
+image_thumbs = document.querySelectorAll(".preview")
+
+for (let i = 0; i < image_thumbs.length ; i++) {
+  image_thumbs[i].tabIndex = "0"
+  }
