@@ -1,2 +1,4 @@
 # monsieur-le-git.github.io
-To host website for UoM Web Design course
+
+CS416 Summer 2024
+Narrative Visualisation Project
