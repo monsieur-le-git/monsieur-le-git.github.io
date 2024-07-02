@@ -2,33 +2,36 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Final Interactive Photo Gallery TESTING TESTING</title>
-	<link rel="stylesheet" href="css/gallery.css">
+	<title>sjhobbs2 CS416 NarVis</title>
+	<link rel="stylesheet" href="css/index.css">
+  <script src='https://d3js.org/d3.v6.min.js'></script>
+  <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+  <script src='js/index.js'></script>
 </head>
-<body>
-
-  <header>
-    <h1> Simon's Incredible Interactive Photo Gallery</h1>
-  </header>
-
-	
-	<div id = "image">
-		Hover over an image below to display here.
+<body onload="init()">
+	<div id="wrapper">
+		<header>
+			<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
+			<h1> Happiness & Wellbeing: Australia vs the Extremes</h1>
+			<h2> Which were the most, and least happy countries in 2023? Where does Australia sit?</h2>
+			<nav>
+				<button onclick="test_transition()">Home</button>
+				<button onclick="requestScene('prevScene')">Prev</button>
+				<button onclick="requestScene(1)">1</button>
+				<button onclick="requestScene(2)">2</button>
+				<button onclick="requestScene(3)">3</button>
+				<button onclick="requestScene(4)">4</button>
+				<button onclick="requestScene('nextScene')">Next</button>
+			</nav>
+		</header>
+		<main>
+			<!-- The next divs are all on one line, so there's no mysterious tiny gap when they're rendered as inline-block -->
+			<div id="textPanel"></div><div id="chartOne"></div><div id="legendBar"></div><div id="chartTwo"></div>
+		</main>
+		<footer>
+			Dataset: World Happiness Report 2024, <a href ='https://happiness-report.s3.amazonaws.com/2024/DataForTable2.1.xls'>"Data for Table 2.1"</a>.
+		</footer>
 	</div>
 	
-	<img class = "preview" alt = "Aloy from Horizon Zero Dawn" src = "img/aloy.jpg" onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <img class = "preview" alt = "V from Cyberpunk 2077" src = "img/v.jpg"  onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <img class = "preview" alt = "Tensay from Far Cry Primal" src = "img/tensay.jpg"  onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <img class = "preview" alt = "Eyeballs from Deus Ex: Human Revolution" src = "img/eyeballs.jpg"  onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <img class = "preview" alt = "Thief from my front porch" src = "img/thief.jpg"  onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <img class = "preview" alt = "Vista from Cyberpunk 2077" src = "img/vista.jpg"  onmouseover = "upDate(this)" onfocus = "upDate(this)" onmouseout = "unDo()" onblur = "unDo()">
-
-  <script src="js/gallery.js"></script>
-
 </body>
 </html>
