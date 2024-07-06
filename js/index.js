@@ -5,6 +5,10 @@ let SCENEID = 0;
 // ----- GLOBAL VARIABLES ----
 
 const MAXSCENE = 4;
+let DATA2 = {}; // Needs to be global because it's read during init(), but used repeatedly elsewhere.
+let DATA2_BY_COUNTRY = {};   // Needs to be global because it's read during init(), but used repeatedly elsewhere.
+let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green'])  // Change to match number of countries
+
 // const CANVAS_HEIGHT = '500px'
 // const CANVAS_WIDTH = '1000px'
 
@@ -81,6 +85,12 @@ async function init()
 // It initialises by reading the data, creating DOM objects, charts.
 // Then it displays the first scene. 
 {
+
+  // Read in the data for chartTwo
+  DATA2 = await d3.csv('../data/data_chartTwo.csv');
+  // group the data by country (because we want one line per country)
+  DATA2_BY_COUNTRY = d3.group(DATA2, d => d.country); 
+  
 
   await createLegendBar();
   await createChartOne();
@@ -192,10 +202,9 @@ async function createChartOne(){
 }
 
 async function createChartTwo(){
-  // This function only called once, during init.
-
-  // Read in the data for chartTwo
-  const data2 = await d3.csv('../data/data_chartTwo.csv')
+  // This function is called only once, during init.
+  // To update the chart, a separate function is used, which selects instead of appends.
+  // (This allows for neat transitions!)
 
   // Set dimensions and margins of plot
   const margin = {top: 100, right: 30, bottom: 30, left: 60},
@@ -208,43 +217,39 @@ async function createChartTwo(){
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
+      .attr("id","chartTwo_plotArea")
       .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  // group the data by country (because we want one line per country
-  const dataset_by_country = d3.group(data2, d => d.country); 
-
+  
   // Add X axis (year)
   const x = d3.scaleLinear()
-    .domain(d3.extent(data2, function(d) { return d.year; }))
+    .domain(d3.extent(DATA2, function(d) { return d.year; }))
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", `translate(0, ${height})`)
+    .attr("id","chartTwo_xAxis")
     .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
 
-  // Add Y axis (indicator valoue)
+  // Add Y axis (indicator value)
   const y = d3.scaleLinear()
-    .domain([0, d3.max(data2, function(d) { return +d.ladder; })])
+    .domain([d3.min(DATA2, function(d) { return +d.gdp; }), d3.max(DATA2, function(d) { return +d.gdp; })])
     .range([ height, 0 ]);
   svg.append("g")
+    .attr("id","chartTwo_yAxis")
     .call(d3.axisLeft(y));
-
-  // color palette
-  const color = d3.scaleOrdinal()
-    .range(['#e41a1c','#377eb8'])  // Change to match number of countries
-
+  
   // Draw the line
   svg.selectAll(".line")
-      .data(dataset_by_country)
+      .data(DATA2_BY_COUNTRY)
       .join("path")
         .transition()
         .duration(1000)
         .attr("fill", "none")
-        .attr("stroke", function(d){ return color(d[0]) })
+        .attr("stroke", function(d){ return COLOUR_COUNTRY(d[0]) })
         .attr("stroke-width", 1.5)
         .attr("d", function(d){
           return d3.line()
             .x(function(d) { return x(d.year); })
-            .y(function(d) { return y(+d.ladder); })
+            .y(function(d) { return y(+d.gdp); })
             (d[1])
         })
 
@@ -362,9 +367,49 @@ function updateChartTwo(){
   // d3.select('#chartTwo').style('background-color', 'red');
   // console.log('yep')
   let selectedOption = d3.select('#wellbeingIndicator').property('value');
-  console.log(selectedOption)
+  // console.log(selectedOption)
 
-  console.log(data2[selectedOption])
+  // Set dimensions and margins of plot
+  const margin = {top: 100, right: 30, bottom: 30, left: 60},
+  width = 360 - margin.left - margin.right,
+  height = 410 - margin.top - margin.bottom;
 
+  const svg = d3.select("#chartTwo_plotArea")
+
+  // Remove old lines
+  svg.selectAll('path').remove()
+
+  // Redefine X axis (year) - not for updating on graph, but required for line plotting
+  const x = d3.scaleLinear()
+    .domain(d3.extent(DATA2, function(d) { return d.year; }))
+    .range([ 0, width ]);
+  svg.select("#chartTwo_xAxis")
+    .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
+
+  // Update Y-axis
+  const y = d3.scaleLinear()
+    .domain([d3.min(DATA2, function(d) { return +d[selectedOption]; }), d3.max(DATA2, function(d) { return +d[selectedOption]; })])
+    .range([ height, 0 ]);
+  svg.select("#chartTwo_yAxis")
+    .transition()
+    .duration(1000)
+    .call(d3.axisLeft(y));
+
+
+  // Update line paths
+  svg.selectAll(".line")
+  .data(DATA2_BY_COUNTRY)
+  .join("path")
+    .transition()
+    .duration(1000)
+    .attr("fill", "none")
+    .attr("stroke", function(d){ return COLOUR_COUNTRY(d[0]) })
+    .attr("stroke-width", 1.5)
+    .attr("d", function(d){
+      return d3.line()
+        .x(function(d) { return x(d.year); })
+        .y(function(d) { return y(+d[selectedOption]); })
+        (d[1])
+    })
 
 }
