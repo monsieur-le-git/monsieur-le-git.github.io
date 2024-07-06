@@ -18,6 +18,14 @@ div{
   vertical-align: top;
 }
 
+.chartBanner{
+  position:absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size:large; 
+}
+
 #wrapper{
   width: 1000px;
   margin-left: auto;
@@ -40,6 +48,16 @@ footer {
   font-style: italic;
 }
 
+.textBoxCentred{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1.5;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 #textPanel{
   background-color: aqua;
   word-wrap: break-word;
@@ -47,28 +65,70 @@ footer {
   box-sizing : border-box;
 }
 
+.button{
+  
+}
+
 #chartOne{
-  display: inline-block;
   background-color: bisque;
+  display: inline-block;
+  position: relative;
   /* height: 200px; */
   /* width: 200px; */
 }
 
 #chartTwo{
-  display: inline-block;
   background-color: orange;
+  display: inline-block;
+  position: relative;
   height: 85%;
   width: 40%;
 }
 
 #legendBar{
-  background-color: yellow;
+  /* background-color: yellow; */
   display: inline-block;
-  width: 20%;
+  width: 19%;
 }
 
-#chart{
-  display:none;
+#legend{
+  background-color: red;
+  width: 90%;
+  height: 40%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10%;
+}
+
+#indicatorExplanationHoverBox{
+  background-color: blueviolet;
+  width: 90%;
+  height: 30%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10%;
+}
+
+#ladderExplanation{
+  visibility: hidden;
+  background-color: brown;
+  width: 60%;
+  height: 50%;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  z-index: 100;
+}
+
+#wellbeingExplanation{
+  visibility: hidden;
+  background-color: green;
+  width: 60%;
+  height: 50%;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  z-index: 100;
 }
 
 /* CARRYOVER FROM PREV ASSIG */

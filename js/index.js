@@ -29,13 +29,29 @@ sceneParams[1] = {
   chartOne_width : '40%',
 
   chartTwo_displayMode : 'none',
+
+  finTrace_strokeWidth : 10,
+  afgTrace_strokeWidth : 1.5,
+  ausTrace_strokeWidth : 1.5,
+
+  afgTrace_visibility : 'hidden',
+  ausTrace_visibility : 'hidden',
 };
+
+// Define all the other scenes as a copy of Scene 1, then differences.
 
 sceneParams[2] = {...sceneParams[1]};
 sceneParams[2].textPanel_HTML = '<h3>Afghanistan = Least Happy</h3><p>Afghanistan is a nation in crisis.</p><p>The country has been in the grip of war and political turmoil for the past two decades.</p>';
+sceneParams[2].finTrace_strokeWidth = 1.5;
+sceneParams[2].afgTrace_strokeWidth = 10;
+sceneParams[2].afgTrace_visibility = 'visible';
 
 sceneParams[3] = {...sceneParams[1]};
 sceneParams[3].textPanel_HTML = '<h3>Australia = Very Happy</h3><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
+sceneParams[3].finTrace_strokeWidth = 1.5;
+sceneParams[3].ausTrace_strokeWidth = 10;
+sceneParams[3].afgTrace_visibility = 'visible';
+sceneParams[3].ausTrace_visibility = 'visible';
 
 sceneParams[4] = {...sceneParams[1]};
 sceneParams[4].textPanel_displaymode = 'block';
@@ -48,6 +64,13 @@ sceneParams[4].legendBar_height = '85%';
 sceneParams[4].textPanel_width = '100%';
 sceneParams[4].chartOne_width = '40%';
 sceneParams[4].chartTwo_displayMode = 'inline-block';
+//
+sceneParams[4].finTrace_strokeWidth = 1.5;
+sceneParams[4].afgTrace_strokeWidth = 1.5;
+sceneParams[4].ausTrace_strokeWidth = 1.5;
+//
+sceneParams[4].afgTrace_visibility = 'visible';
+sceneParams[4].ausTrace_visibility = 'visible';
 
 
 // ****************************************
@@ -58,16 +81,27 @@ async function init()
 // It initialises by reading the data, creating DOM objects, charts.
 // Then it displays the first scene. 
 {
-  createLegendBar();
-  createChartOne();
-  createChartTwo();
 
-  displayScene(1);
+  await createLegendBar();
+  await createChartOne();
+  await createChartTwo();
+
+  await displayScene(1);
 
   // document.addEventListener("onload", celebrateLoad())
+  
+  obj=document.getElementById("indicatorExplanationHoverBox")
+  obj.addEventListener("mouseover", displayIndicatorExplanation);
+  obj.addEventListener("mouseout", hideIndicatorExplanation); 
 }
 
 function createLegendBar(){
+  // This function only called once, during init.
+
+  const lbar = d3.select('#legendBar')
+
+  lbar.append('div')
+    .attr()
 
 }
 
@@ -76,8 +110,9 @@ async function createChartOne(){
 
   // Read in the data for chartOne
   const data1 = await d3.csv('../data/data_chartOne.csv')
+  // const data1 = [{Year : 2008, Finland : 2},{Year : 2010, Finland : 5},{Year : 2012, Finland : 6}];
   // console.log("Dataset load complete")  
-  // const dataset = await d3.csv('../data/basic-test.csv')
+  // console.log(data1)
 
   // Set dimensions and margins of plot
   const margin = {top: 100, right: 30, bottom: 30, left: 60},
@@ -104,36 +139,63 @@ async function createChartOne(){
 
   // Add Y axis (indicator value)
   const y = d3.scaleLinear()
-    .domain([0, d3.max(data1, function(d) { return +d.Finland; })])
+    .domain([0, 10])
     .range([ height, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
 
   // color palette
-  const color = d3.scaleOrdinal()
-    .range(['#e41a1c','#377eb8'])  // Change to match number of countries
+  // const color = d3.scaleOrdinal()
+  //   .range(['#e41a1c','#377eb8'])  // Change to match number of countries
 
   // Draw line for Finland
   svg.append("path")
-      .datum(data1)
-      .transition()
-      .duration(1000)
-      .attr("fill", "none")
-      .attr("stroke", "blue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-          .x(function(d) { return x(d.Year); })
-          .y(function(d) { return y(d.Finland); })
-        )
+    .datum(data1)
+    .attr("id","finTrace")
+    .transition()
+    .duration(1000)
+    .attr("fill", "none")
+    .attr("stroke", "green")
+    .attr("stroke-width", 1.5)
+    .attr("d", d3.line()
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Finland); })
+      );
+
+  // Draw line for Afghanistan
+  svg.append("path")
+    .datum(data1)
+    .attr("id","afgTrace")
+    .transition()
+    .duration(1000)
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 1)
+    .attr("d", d3.line()
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Afghanistan); })
+      );
+
+    // Draw line for Australia
+    svg.append("path")
+    .datum(data1)
+    .attr("id","ausTrace")
+    .transition()
+    .duration(1000)
+    .attr("fill", "none")
+    .attr("stroke", "blue")
+    .attr("stroke-width", 1.5)
+    .attr("d", d3.line()
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Australia); })
+      );
 }
 
 async function createChartTwo(){
   // This function only called once, during init.
 
   // Read in the data for chartTwo
-  // const data2 = await d3.csv('../data/chartTwo.csv')
-  const dataset = await d3.csv('../data/basic-test.csv')
-  // console.log("Dataset load complete")
+  const data2 = await d3.csv('../data/data_chartTwo.csv')
 
   // Set dimensions and margins of plot
   const margin = {top: 100, right: 30, bottom: 30, left: 60},
@@ -149,11 +211,11 @@ async function createChartTwo(){
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
   // group the data by country (because we want one line per country
-  const dataset_by_country = d3.group(dataset, d => d.country); 
+  const dataset_by_country = d3.group(data2, d => d.country); 
 
   // Add X axis (year)
   const x = d3.scaleLinear()
-    .domain(d3.extent(dataset, function(d) { return d.year; }))
+    .domain(d3.extent(data2, function(d) { return d.year; }))
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", `translate(0, ${height})`)
@@ -161,7 +223,7 @@ async function createChartTwo(){
 
   // Add Y axis (indicator valoue)
   const y = d3.scaleLinear()
-    .domain([0, d3.max(dataset, function(d) { return +d.ladder; })])
+    .domain([0, d3.max(data2, function(d) { return +d.ladder; })])
     .range([ height, 0 ]);
   svg.append("g")
     .call(d3.axisLeft(y));
@@ -219,6 +281,21 @@ async function displayScene(sceneId){
   // Its purpose is to display the new Scene.
   SCENEID = sceneId;
 
+  // Nav bar: Enable all buttons, then disable specific ones for this scene
+  document.getElementById('buttonPrev').disabled=false;
+  document.getElementById('button1').disabled=false;
+  document.getElementById('button2').disabled=false;
+  document.getElementById('button3').disabled=false;
+  document.getElementById('button4').disabled=false;
+  document.getElementById('buttonNext').disabled=false;
+  // For some reason I can't get bulk-enabling to work!
+  //d3.selectAll('button').attr('disabled','false');
+  // document.querySelector('#button1').disabled=false;
+  // document.getElementsByTagName('button').setAttribute('disabled', 'false');
+  d3.select('#button'+SCENEID).attr('disabled','true');
+  if (SCENEID==1) {document.getElementById('buttonPrev').disabled=true;}
+  if (SCENEID==MAXSCENE) {document.getElementById('buttonNext').disabled=true;}
+
   // Display textPanel
   curSel = d3.select('#textPanel');
   curSel.html("");
@@ -235,6 +312,16 @@ async function displayScene(sceneId){
   curSel.style('height',sceneParams[SCENEID].chartOne_height)
   curSel.style('width',sceneParams[SCENEID].chartOne_width)
 
+  // Adjust chartOne country trace thickness
+  d3.select('#finTrace').transition().duration(1000)
+    .attr('stroke-width', sceneParams[SCENEID].finTrace_strokeWidth);
+  d3.select('#afgTrace').transition().duration(1000)
+    .attr('stroke-width', sceneParams[SCENEID].afgTrace_strokeWidth)
+    .attr('visibility', sceneParams[SCENEID].afgTrace_visibility);
+  d3.select('#ausTrace').transition().duration(1000)
+    .attr('stroke-width', sceneParams[SCENEID].ausTrace_strokeWidth)
+    .attr('visibility', sceneParams[SCENEID].ausTrace_visibility);
+
   // Display legendBar
   curSel = d3.select('#legendBar');
   curSel.style('height',sceneParams[SCENEID].legendBar_height)
@@ -250,3 +337,34 @@ async function displayScene(sceneId){
 // ****************************************
 // ------ FUNCTIONS: EVENT HANDLING ------
 // These functions only get called once, by init() 
+
+
+function displayIndicatorExplanation(){
+  // console.log('hey');
+  d3.select("#ladderExplanation")
+  .style('visibility','visible');
+
+  d3.select("#wellbeingExplanation")
+  .style('visibility','visible');
+}
+
+function hideIndicatorExplanation(){
+  // console.log('hey');
+  d3.select("#ladderExplanation")
+  .style('visibility','hidden');
+
+  d3.select("#wellbeingExplanation")
+  .style('visibility','hidden');
+
+}
+
+function updateChartTwo(){
+  // d3.select('#chartTwo').style('background-color', 'red');
+  // console.log('yep')
+  let selectedOption = d3.select('#wellbeingIndicator').property('value');
+  console.log(selectedOption)
+
+  console.log(data2[selectedOption])
+
+
+}
