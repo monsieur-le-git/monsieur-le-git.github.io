@@ -31,13 +31,21 @@ div{
   vertical-align: top;
 }
 
-.chartBanner{
+.chartTitle{
+  font-family: Verdana;
   position:absolute;
   top: 5%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 25%;
+  /* transform: translate(-50%, -50%); */
   margin: 0px;
   font-size:large; 
+}
+
+select{
+  background-color: white;
+  text-align: center;
+  /* padding-right: 50%; */
+  transform: translate(-10%, -10%);
 }
 
 #wrapper{
@@ -113,18 +121,36 @@ footer {
 }
 
 #legend{
-  background-color: red;
+  /* background-color: bisque; */
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
   width: 90%;
-  height: 40%;
+  height: 200px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10%;
+  margin-top: 30px;
+  font-size:larger;
+}
+
+#legend div{
+  /* background-color:aqua; */
+  display: inline-block;
+  margin: 0px 54px 0px;
+}
+
+.legendAfg{
+  opacity:0.5;
+}
+
+.legendAus{
+  opacity:0.5;
 }
 
 #indicatorExplanationHoverBox{
   background-color: darkgrey;
   width: 90%;
-  height: 30%;
+  height: 120px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 10%;
@@ -134,10 +160,10 @@ footer {
   /* font-size:small; */
   opacity: 0;
   background-color: whitesmoke;
-  width: 60%;
-  height: 50%;
+  width: 75%;
+  height: 300px;
   position: absolute;
-  top: 20%;
+  top: 60px;
   left: 20%;
   z-index: 100;
 }
@@ -145,10 +171,10 @@ footer {
 #wellbeingExplanation{
   opacity: 0;
   background-color: green;
-  width: 60%;
-  height: 50%;
+  width: 75%;
+  height: 300px;
   position: absolute;
-  top: 20%;
+  top: 60px;
   left: 20%;
   z-index: 100;
 }

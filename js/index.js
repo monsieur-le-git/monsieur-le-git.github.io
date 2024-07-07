@@ -45,6 +45,9 @@ sceneParams[1] = {
 
   afgTrace_visibility : 'hidden',
   ausTrace_visibility : 'hidden',
+
+  legendAfg_opacity : 0,
+  legendAus_opacity : 0,
 };
 
 // Define all the other scenes as a copy of Scene 1, then differences.
@@ -54,6 +57,7 @@ sceneParams[2].textPanel_HTML = '<h3><br><br><br>Afghanistan = Least Happy</h3><
 sceneParams[2].finTrace_strokeWidth = 1.5;
 sceneParams[2].afgTrace_strokeWidth = 10;
 sceneParams[2].afgTrace_visibility = 'visible';
+sceneParams[2].legendAfg_opacity = 1;
 
 sceneParams[3] = {...sceneParams[1]};
 sceneParams[3].textPanel_HTML = '<h3><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
@@ -61,6 +65,8 @@ sceneParams[3].finTrace_strokeWidth = 1.5;
 sceneParams[3].ausTrace_strokeWidth = 10;
 sceneParams[3].afgTrace_visibility = 'visible';
 sceneParams[3].ausTrace_visibility = 'visible';
+sceneParams[3].legendAfg_opacity = 1;
+sceneParams[3].legendAus_opacity = 1;
 
 sceneParams[4] = {...sceneParams[1]};
 sceneParams[4].textPanel_displaymode = 'block';
@@ -80,6 +86,9 @@ sceneParams[4].ausTrace_strokeWidth = 1.5;
 //
 sceneParams[4].afgTrace_visibility = 'visible';
 sceneParams[4].ausTrace_visibility = 'visible';
+sceneParams[4].legendAfg_opacity = 1;
+sceneParams[4].legendAus_opacity = 1;
+
 
 
 // ****************************************
@@ -113,11 +122,31 @@ async function init()
 function createLegendBar(){
   // This function only called once, during init.
 
-  const lbar = d3.select('#legendBar')
+  const svg = d3.select('#legend').append('svg')
 
-  lbar.append('div')
-    .attr()
+  svg.style('position','absolute')
 
+  svg.append("circle")
+    .attr('class','legendFin')
+    .attr("cx",30)
+    .attr("cy",8)
+    .attr("r", 6)
+    .style("fill", "green");
+
+    svg.append("circle")
+    .attr('class','legendAfg')
+    .attr("cx","10%")
+    .attr("cy","50%")
+    .attr("r", 6)
+    .style("fill", "red");
+
+    svg.append("circle")
+    .attr('class','legendAus')
+    .attr("cx","10%")
+    .attr("cy","95%")
+    .attr("r", 6)
+    .style("fill", "blue");
+    
 }
 
 async function createChartOne(){
@@ -334,6 +363,12 @@ async function displayScene(sceneId){
   curSel.style('height',sceneParams[SCENEID].legendBar_height)
   curSel.style('width',sceneParams[SCENEID].legendBar_width)
 
+  // Display (or hide!) individual legend entries
+  d3.selectAll('.legendAfg').transition().duration(1000)
+    .style('opacity',sceneParams[SCENEID].legendAfg_opacity)
+  d3.selectAll('.legendAus').transition().duration(1000)
+    .style('opacity',sceneParams[SCENEID].legendAus_opacity)
+
   // Display (or hide!) chartTwo
   curSel = d3.select('#chartTwo');
   curSel.style('display',sceneParams[SCENEID].chartTwo_displayMode)
@@ -394,7 +429,7 @@ function updateChartTwo(){
     .domain(d3.extent(DATA2, function(d) { return d.year; }))
     .range([ 0, CHART_WIDTH ]);
   svg.select("#chartTwo_xAxis")
-    .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));  // TODO: Amend to number of years
 
   // Update Y-axis
   const y = d3.scaleLinear()

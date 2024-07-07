@@ -28,7 +28,7 @@
 			<!-- The next divs aren't all on one line, so there's a mysterious tiny gap when they're rendered as inline-block -->
 			<div id="textPanel"></div>
 			<div id="chartOne">
-				<p class="chartBanner">Cantril Life Ladder Score</p>
+				<p class="chartTitle">Cantril Life Ladder Score</p>
 				<div id="ladderExplanation" class="textBoxCentred">
 					National average of response to the following question:
 					<br>
@@ -39,13 +39,17 @@
 				</div>
 			</div>
 			<div id="legendBar">
-				<div id="legend"></div>
+				<div id="legend">
+					<div class="legendFin">Finland</div>
+					<div class="legendAfg">Afghanistan</div>
+					<div class="legendAus">Australia</div>
+				</div>
 				<div id="indicatorExplanationHoverBox" class="textBoxCentred">
 					<p>Hover your mouse over this box to see an explanation of indicator metrics</p>
 				</div>
 			</div>
 			<div id="chartTwo">
-				<select id="wellbeingIndicator" name="wellbeingIndicator" class="chartBanner" onchange="updateChartTwo()">
+				<select id="wellbeingIndicator" name="wellbeingIndicator" class="chartTitle" onchange="updateChartTwo()">
 					<option value="gdp">Log GDP per capita</option>
 					<option value="social">Social support</option>
 					<option value="lifeexp">Life expectancy</option>
