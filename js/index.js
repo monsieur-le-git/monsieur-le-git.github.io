@@ -7,7 +7,12 @@ let SCENEID = 0;
 const MAXSCENE = 4;
 let DATA2 = {}; // Needs to be global because it's read during init(), but used repeatedly elsewhere.
 let DATA2_BY_COUNTRY = {};   // Needs to be global because it's read during init(), but used repeatedly elsewhere.
-let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green'])  // Change to match number of countries
+let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green']);  // Change to match number of countries
+const BOX_OPACITY = 0.9;
+
+const CHART_MARGIN = {top: 60, right: 20, bottom: 30, left: 60},
+CHART_WIDTH = 410 - CHART_MARGIN.left - CHART_MARGIN.right,
+CHART_HEIGHT = 410 - CHART_MARGIN.top - CHART_MARGIN.bottom;
 
 // const CANVAS_HEIGHT = '500px'
 // const CANVAS_WIDTH = '1000px'
@@ -23,7 +28,7 @@ const sceneParams = [];
 
 sceneParams[1] = {
   textPanel_displaymode : 'inline-block',
-  textPanel_HTML : '<h3>Finland = Most Happy</h3><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There appears to be a slight upwards trend.</p>',
+  textPanel_HTML : '<h3><br><br><br>Finland = Most Happy</h3><br><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There appears to be a slight upwards trend.</p>',
 
   textPanel_height : '100%',
   chartOne_height : '100%',
@@ -45,13 +50,13 @@ sceneParams[1] = {
 // Define all the other scenes as a copy of Scene 1, then differences.
 
 sceneParams[2] = {...sceneParams[1]};
-sceneParams[2].textPanel_HTML = '<h3>Afghanistan = Least Happy</h3><p>Afghanistan is a nation in crisis.</p><p>The country has been in the grip of war and political turmoil for the past two decades.</p>';
+sceneParams[2].textPanel_HTML = '<h3><br><br><br>Afghanistan = Least Happy</h3><br><p>Afghanistan is a nation in crisis.</p><p>The country has been in the grip of war and political turmoil for the past two decades.</p><p>Happiness has trended down sharply, with a temporary rebound in 2015-16.</p>';
 sceneParams[2].finTrace_strokeWidth = 1.5;
 sceneParams[2].afgTrace_strokeWidth = 10;
 sceneParams[2].afgTrace_visibility = 'visible';
 
 sceneParams[3] = {...sceneParams[1]};
-sceneParams[3].textPanel_HTML = '<h3>Australia = Very Happy</h3><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
+sceneParams[3].textPanel_HTML = '<h3><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
 sceneParams[3].finTrace_strokeWidth = 1.5;
 sceneParams[3].ausTrace_strokeWidth = 10;
 sceneParams[3].afgTrace_visibility = 'visible';
@@ -101,8 +106,8 @@ async function init()
   // document.addEventListener("onload", celebrateLoad())
   
   obj=document.getElementById("indicatorExplanationHoverBox")
-  obj.addEventListener("mouseover", displayIndicatorExplanation);
-  obj.addEventListener("mouseout", hideIndicatorExplanation); 
+  obj.addEventListener("mouseenter", displayIndicatorExplanation);
+  obj.addEventListener("mouseleave", hideIndicatorExplanation); 
 }
 
 function createLegendBar(){
@@ -124,33 +129,29 @@ async function createChartOne(){
   // console.log("Dataset load complete")  
   // console.log(data1)
 
-  // Set dimensions and margins of plot
-  const margin = {top: 100, right: 30, bottom: 30, left: 60},
-      width = 360 - margin.left - margin.right,
-      height = 410 - margin.top - margin.bottom;
-
   // Append svg object to page body (only put a div object in)
   const svg = d3.select("#chartOne")
     .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("width", CHART_WIDTH + CHART_MARGIN.left + CHART_MARGIN.right)
+      .attr("height", CHART_HEIGHT + CHART_MARGIN.top + CHART_MARGIN.bottom)
     .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .attr("transform", `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
 
   // group the data by country (because we want one line per country
 
   // Add X axis (year)
   const x = d3.scaleLinear()
     .domain(d3.extent(data1, function(d) { return d.Year;}))
-    .range([ 0, width ]);
+    .range([ 0, CHART_WIDTH ]);
   svg.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
+    .attr("transform", `translate(0, ${CHART_HEIGHT})`)
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));  // TODO: Amend to number of years
+  
 
   // Add Y axis (indicator value)
   const y = d3.scaleLinear()
     .domain([0, 10])
-    .range([ height, 0]);
+    .range([ CHART_HEIGHT, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
 
@@ -206,33 +207,28 @@ async function createChartTwo(){
   // To update the chart, a separate function is used, which selects instead of appends.
   // (This allows for neat transitions!)
 
-  // Set dimensions and margins of plot
-  const margin = {top: 100, right: 30, bottom: 30, left: 60},
-      width = 360 - margin.left - margin.right,
-      height = 410 - margin.top - margin.bottom;
-
   // Append svg object to page body (only put a div object in)
   const svg = d3.select("#chartTwo")
     .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("width", CHART_WIDTH + CHART_MARGIN.left + CHART_MARGIN.right)
+      .attr("height", CHART_HEIGHT + CHART_MARGIN.top + CHART_MARGIN.bottom)
     .append("g")
       .attr("id","chartTwo_plotArea")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .attr("transform", `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
   
   // Add X axis (year)
   const x = d3.scaleLinear()
     .domain(d3.extent(DATA2, function(d) { return d.year; }))
-    .range([ 0, width ]);
+    .range([ 0, CHART_WIDTH ]);
   svg.append("g")
-    .attr("transform", `translate(0, ${height})`)
+    .attr("transform", `translate(0, ${CHART_HEIGHT})`)
     .attr("id","chartTwo_xAxis")
-    .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));  // TODO: Amend to number of years
 
   // Add Y axis (indicator value)
   const y = d3.scaleLinear()
     .domain([d3.min(DATA2, function(d) { return +d.gdp; }), d3.max(DATA2, function(d) { return +d.gdp; })])
-    .range([ height, 0 ]);
+    .range([ CHART_HEIGHT, 0 ]);
   svg.append("g")
     .attr("id","chartTwo_yAxis")
     .call(d3.axisLeft(y));
@@ -259,7 +255,7 @@ async function createChartTwo(){
 // ****************************************
 // ------ FUNCTIONS: SCENE TRANSITIONS ------
 
-function requestScene(requestedScene){
+async function requestScene(requestedScene){
   // This function gets triggered by a button press on the nav bar.
   // Its purpose is to set the requested Scene ID to a (valid) number, 
   // and then request the scene to be displayed. 
@@ -277,7 +273,7 @@ function requestScene(requestedScene){
 
   // Display the new Scene
   if (newSceneId != SCENEID) {
-    displayScene(newSceneId);
+    await displayScene(newSceneId);
   }
 }
 
@@ -304,18 +300,24 @@ async function displayScene(sceneId){
   // Display textPanel
   curSel = d3.select('#textPanel');
   curSel.html("");
-  curSel.style('height',sceneParams[SCENEID].textPanel_height)
 
   curSel
-  .style('display',sceneParams[SCENEID].textPanel_displaymode)
-  .style('width',sceneParams[SCENEID].textPanel_width);
+    .style('height',sceneParams[SCENEID].textPanel_height)
+    .style('display',sceneParams[SCENEID].textPanel_displaymode)
+    .style('width',sceneParams[SCENEID].textPanel_width);
 
   curSel.html(sceneParams[SCENEID].textPanel_HTML);
+  
+  curSel
+    .style('opacity',0)
+    .transition()
+    .duration(1000)
+    .style('opacity',1);
 
   // Display chartOne
   curSel = d3.select('#chartOne');
-  curSel.style('height',sceneParams[SCENEID].chartOne_height)
-  curSel.style('width',sceneParams[SCENEID].chartOne_width)
+  curSel.style('height',sceneParams[SCENEID].chartOne_height);
+  curSel.style('width',sceneParams[SCENEID].chartOne_width);
 
   // Adjust chartOne country trace thickness
   d3.select('#finTrace').transition().duration(1000)
@@ -347,19 +349,32 @@ async function displayScene(sceneId){
 function displayIndicatorExplanation(){
   // console.log('hey');
   d3.select("#ladderExplanation")
-  .style('visibility','visible');
+  .transition()
+  .duration(500)
+  // .style('visibility','visible')
+  .style('opacity',BOX_OPACITY);
 
   d3.select("#wellbeingExplanation")
-  .style('visibility','visible');
+  .transition()
+  .duration(500)
+  // .style('visibility','visible')
+  .style('opacity',BOX_OPACITY);
 }
 
 function hideIndicatorExplanation(){
   // console.log('hey');
   d3.select("#ladderExplanation")
-  .style('visibility','hidden');
+  .transition()
+  .duration(1000)
+  // .style('visibility','hidden')
+  .style('opacity','0');
 
   d3.select("#wellbeingExplanation")
-  .style('visibility','hidden');
+  .transition()
+  .duration(1000)
+  // .style('visibility','hidden')
+  .style('opacity','0');
+  // .style('visibility','hidden');
 
 }
 
@@ -369,11 +384,6 @@ function updateChartTwo(){
   let selectedOption = d3.select('#wellbeingIndicator').property('value');
   // console.log(selectedOption)
 
-  // Set dimensions and margins of plot
-  const margin = {top: 100, right: 30, bottom: 30, left: 60},
-  width = 360 - margin.left - margin.right,
-  height = 410 - margin.top - margin.bottom;
-
   const svg = d3.select("#chartTwo_plotArea")
 
   // Remove old lines
@@ -382,14 +392,14 @@ function updateChartTwo(){
   // Redefine X axis (year) - not for updating on graph, but required for line plotting
   const x = d3.scaleLinear()
     .domain(d3.extent(DATA2, function(d) { return d.year; }))
-    .range([ 0, width ]);
+    .range([ 0, CHART_WIDTH ]);
   svg.select("#chartTwo_xAxis")
     .call(d3.axisBottom(x).ticks(5));  // TODO: Amend to number of years
 
   // Update Y-axis
   const y = d3.scaleLinear()
     .domain([d3.min(DATA2, function(d) { return +d[selectedOption]; }), d3.max(DATA2, function(d) { return +d[selectedOption]; })])
-    .range([ height, 0 ]);
+    .range([ CHART_HEIGHT, 0 ]);
   svg.select("#chartTwo_yAxis")
     .transition()
     .duration(1000)
