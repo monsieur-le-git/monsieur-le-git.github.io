@@ -7,14 +7,15 @@ let SCENEID = 1;
 const MAXSCENE = 4;
 let DATA2 = {}; // Needs to be global because it's read during init(), but used repeatedly elsewhere.
 let DATA2_BY_COUNTRY = {};   // Needs to be global because it's read during init(), but used repeatedly elsewhere.
-let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green']);  // Change to match number of countries
-const BOX_OPACITY = 0.9;
+let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green']);  // One for each country
+const BOX_OPACITY = 0.9; // For the boxes containing indicator explanation text
 
 const CHART_MARGIN = {top: 60, right: 20, bottom: 30, left: 60};
 const CHART_WIDTH = 410 - CHART_MARGIN.left - CHART_MARGIN.right;
 const CHART_HEIGHT = 410 - CHART_MARGIN.top - CHART_MARGIN.bottom;
 
 const INDICATOR_TEXT = {
+  // The text to be displayed over Chart Two, explaining indicator metrics
   gdp : "Log GDP per capita is expressed in purchasing power parity (PPP) at constant 2017 international dollar prices.</option",
   social : 'National average of the binary responses (either 0 or 1) to the question "If you were in trouble, do you have relatives or friends you can count on to help you whenever you need them, or not?"',
   lifeexp : "Healthy life expectancies at birth are based on the data extracted from the World Health Organization’s (WHO) Global Health Observatory data repository (Last updated: 2020-12-04). The data at the source are available for the years 2000, 2010, 2015 and 2019. To match this report’s sample period, interpolation and extrapolation are used.",
@@ -24,9 +25,6 @@ const INDICATOR_TEXT = {
   posaffect : 'National average of three positive affect measures: laugh, enjoyment and doing interesting things in the Gallup World Poll. These measures are the responses to the following three questions, respectively: “Did you smile or laugh a lot yesterday?”, and “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Enjoyment?”, “Did you learn or do something interesting yesterday?”',
   negaffect : 'National average of three negative affect measures. They are worry, sadness and anger, respectively the responses to “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Worry?”, “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Sadness?”, and “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Anger?”',
 }
-
-// const CANVAS_HEIGHT = '500px'
-// const CANVAS_WIDTH = '1000px'
 
 // ****************************************
 // ------ SCENE PARAMETER DEFINITION ------
@@ -183,11 +181,8 @@ async function createChartOne(){
 
   // Read in the data for chartOne
   const data1 = await d3.csv('../data/data_chartOne.csv')
-  // const data1 = [{Year : 2008, Finland : 2},{Year : 2010, Finland : 5},{Year : 2012, Finland : 6}];
-  // console.log("Dataset load complete")  
-  // console.log(data1)
 
-  // Append svg object to page body (only put a div object in)
+  // Append svg object to chart
   const svg = d3.select("#chartOne")
     .append("svg")
       .attr("width", CHART_WIDTH + CHART_MARGIN.left + CHART_MARGIN.right)
@@ -195,7 +190,7 @@ async function createChartOne(){
     .append("g")
       .attr("transform", `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
 
-  // group the data by country (because we want one line per country
+  // group data by country (because we want one line per country)
 
   // Add X axis (year)
   const x = d3.scaleLinear()
@@ -212,10 +207,6 @@ async function createChartOne(){
     .range([ CHART_HEIGHT, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
-
-  // color palette
-  // const color = d3.scaleOrdinal()
-  //   .range(['#e41a1c','#377eb8'])  // Change to match number of countries
 
   // Draw line for Finland
   svg.append("path")
@@ -265,7 +256,7 @@ async function createChartTwo(){
   // To update the chart, a separate function is used, which selects instead of appends.
   // (This allows for neat transitions!)
 
-  // Append svg object to page body (only put a div object in)
+  // Append svg object
   const svg = d3.select("#chartTwo")
     .append("svg")
       .attr("width", CHART_WIDTH + CHART_MARGIN.left + CHART_MARGIN.right)
@@ -310,7 +301,6 @@ async function createChartTwo(){
   // Update the indicator explanation text for the hover box
   d3.select('#wellbeingExplanation')
     .html(INDICATOR_TEXT.gdp);
-
 }
 
 async function createAnnotation(){
@@ -322,7 +312,6 @@ async function createAnnotation(){
     .attr('id','annotationLine')
     .attr('d', d3.line()([[0, 0], [0, 0]]))
     .attr('stroke', 'grey')
-    // .attr('marker-end', 'url(#arrow)')
     .attr('fill', "none")
     .attr("stroke-width", "1px");
 
@@ -333,7 +322,6 @@ async function createAnnotation(){
     .attr("y", 220)
     .style('fill', 'grey')
     .style("text-anchor", "middle")
-    // .style("font-weight", "bold")
     .text("Placeholder");
 }
 
@@ -456,42 +444,32 @@ async function displayScene(sceneId){
 
 
 function displayIndicatorExplanation(){
-  // console.log('hey');
   d3.select("#ladderExplanation")
   .transition()
   .duration(500)
-  // .style('visibility','visible')
   .style('opacity',BOX_OPACITY);
 
   d3.select("#wellbeingExplanation")
   .transition()
   .duration(500)
-  // .style('visibility','visible')
   .style('opacity',BOX_OPACITY);
 }
 
 function hideIndicatorExplanation(){
-  // console.log('hey');
   d3.select("#ladderExplanation")
   .transition()
   .duration(1000)
-  // .style('visibility','hidden')
   .style('opacity','0');
 
   d3.select("#wellbeingExplanation")
   .transition()
   .duration(1000)
-  // .style('visibility','hidden')
   .style('opacity','0');
-  // .style('visibility','hidden');
 
 }
 
 function updateChartTwo(){
-  // d3.select('#chartTwo').style('background-color', 'red');
-  // console.log('yep')
   let selectedOption = d3.select('#wellbeingIndicator').property('value');
-  // console.log(selectedOption)
 
   const svg = d3.select("#chartTwo_plotArea")
 
