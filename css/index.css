@@ -108,6 +108,7 @@ footer {
   word-wrap: break-word;
   padding : 0px 0px 0px 0px; 
   box-sizing : border-box;
+  line-height:1.3
 }
 
 #textPanel p{
@@ -118,6 +119,7 @@ footer {
 .splashText{
   display:inline-block;
   width:530px;
+  margin-left: 20px
 }
 
 button{
