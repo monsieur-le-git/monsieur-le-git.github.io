@@ -94,8 +94,13 @@ footer {
   margin-top:10px;
 }
 
-.button{
-  
+button{
+  /* background-color: rgb(255, 237, 214); */
+  /* color: blue; */
+  /* border-color: blue; */
+  border-radius: 6px;
+  border-width: 3px;
+  font-size: large;
 }
 
 #chartOne{
@@ -104,6 +109,10 @@ footer {
   position: relative;
   /* height: 200px; */
   /* width: 200px; */
+}
+
+#chartOne svg{
+  /* background-color: antiquewhite; */
 }
 
 #chartTwo{
@@ -170,7 +179,7 @@ footer {
 
 #wellbeingExplanation{
   opacity: 0;
-  background-color: green;
+  background-color: whitesmoke;
   width: 75%;
   height: 300px;
   position: absolute;

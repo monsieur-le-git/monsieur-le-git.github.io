@@ -1,6 +1,6 @@
 // ------ STATE VARIABLES ------
 
-let SCENEID = 0;
+let SCENEID = 1;
 
 // ----- GLOBAL VARIABLES ----
 
@@ -10,9 +10,20 @@ let DATA2_BY_COUNTRY = {};   // Needs to be global because it's read during init
 let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green']);  // Change to match number of countries
 const BOX_OPACITY = 0.9;
 
-const CHART_MARGIN = {top: 60, right: 20, bottom: 30, left: 60},
-CHART_WIDTH = 410 - CHART_MARGIN.left - CHART_MARGIN.right,
-CHART_HEIGHT = 410 - CHART_MARGIN.top - CHART_MARGIN.bottom;
+const CHART_MARGIN = {top: 60, right: 20, bottom: 30, left: 60};
+const CHART_WIDTH = 410 - CHART_MARGIN.left - CHART_MARGIN.right;
+const CHART_HEIGHT = 410 - CHART_MARGIN.top - CHART_MARGIN.bottom;
+
+const INDICATOR_TEXT = {
+  gdp : "Log GDP per capita is expressed in purchasing power parity (PPP) at constant 2017 international dollar prices.</option",
+  social : 'National average of the binary responses (either 0 or 1) to the question "If you were in trouble, do you have relatives or friends you can count on to help you whenever you need them, or not?"',
+  lifeexp : "Healthy life expectancies at birth are based on the data extracted from the World Health Organization’s (WHO) Global Health Observatory data repository (Last updated: 2020-12-04). The data at the source are available for the years 2000, 2010, 2015 and 2019. To match this report’s sample period, interpolation and extrapolation are used.",
+  freechoice : 'National average of responses to the GWP question “Are you satisfied or dissatisfied with your freedom to choose what you do with your life?”',
+  generosity : 'The residual of regressing national average of response to the question “Have you donated money to a charity in the past month?” on GDP per capita.',
+  corruption : 'National average of the survey responses to two questions in the GWP: “Is corruption widespread throughout the government or not” and “Is corruption widespread within businesses or not?” The overall perception is just the average of the two 0-or-1 responses. In case the perception of government corruption is missing, we use the perception of business corruption as the overall perception.',
+  posaffect : 'National average of three positive affect measures: laugh, enjoyment and doing interesting things in the Gallup World Poll. These measures are the responses to the following three questions, respectively: “Did you smile or laugh a lot yesterday?”, and “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Enjoyment?”, “Did you learn or do something interesting yesterday?”',
+  negaffect : 'National average of three negative affect measures. They are worry, sadness and anger, respectively the responses to “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Worry?”, “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Sadness?”, and “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Anger?”',
+}
 
 // const CANVAS_HEIGHT = '500px'
 // const CANVAS_WIDTH = '1000px'
@@ -48,6 +59,12 @@ sceneParams[1] = {
 
   legendAfg_opacity : 0,
   legendAus_opacity : 0,
+
+  annotationOpacity: 1,
+  annotationLineCoords : [[270, 230], [323, 135]],
+  annotationText : "Highest value: 7.89 in 2020",
+  annotationText_x : 230,
+  annotationText_y : 250,
 };
 
 // Define all the other scenes as a copy of Scene 1, then differences.
@@ -58,6 +75,10 @@ sceneParams[2].finTrace_strokeWidth = 1.5;
 sceneParams[2].afgTrace_strokeWidth = 10;
 sceneParams[2].afgTrace_visibility = 'visible';
 sceneParams[2].legendAfg_opacity = 1;
+sceneParams[2].annotationText = "Brief rebound in 2015-16";
+sceneParams[2].annotationText_x = 250;
+sceneParams[2].annotationText_y = 180;
+sceneParams[2].annotationLineCoords = [[230, 240], [260, 187]];
 
 sceneParams[3] = {...sceneParams[1]};
 sceneParams[3].textPanel_HTML = '<h3><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
@@ -67,6 +88,10 @@ sceneParams[3].afgTrace_visibility = 'visible';
 sceneParams[3].ausTrace_visibility = 'visible';
 sceneParams[3].legendAfg_opacity = 1;
 sceneParams[3].legendAus_opacity = 1;
+sceneParams[3].annotationText = "Lowest value: 7.03 in 2023";
+sceneParams[3].annotationText_x = 270;
+sceneParams[3].annotationText_y = 230;
+sceneParams[3].annotationLineCoords = [[340, 210], [385, 165]];
 
 sceneParams[4] = {...sceneParams[1]};
 sceneParams[4].textPanel_displaymode = 'block';
@@ -88,8 +113,11 @@ sceneParams[4].afgTrace_visibility = 'visible';
 sceneParams[4].ausTrace_visibility = 'visible';
 sceneParams[4].legendAfg_opacity = 1;
 sceneParams[4].legendAus_opacity = 1;
-
-
+//
+sceneParams[4].annotationOpacity = 0;
+sceneParams[4].annotationText_x = 270;
+sceneParams[4].annotationText_y = 230;
+sceneParams[4].annotationLineCoords = [[340, 210], [385, 165]];
 
 // ****************************************
 // ------ FUNCTIONS: INITIALISATION ------
@@ -109,6 +137,7 @@ async function init()
   await createLegendBar();
   await createChartOne();
   await createChartTwo();
+  await createAnnotation();
 
   await displayScene(1);
 
@@ -276,8 +305,36 @@ async function createChartTwo(){
             .x(function(d) { return x(d.year); })
             .y(function(d) { return y(+d.gdp); })
             (d[1])
-        })
+        });
 
+  // Update the indicator explanation text for the hover box
+  d3.select('#wellbeingExplanation')
+    .html(INDICATOR_TEXT.gdp);
+
+}
+
+async function createAnnotation(){
+  
+  svg = d3.select("#chartOne").select('svg')
+
+  // Line
+  svg.append('path')
+    .attr('id','annotationLine')
+    .attr('d', d3.line()([[0, 0], [0, 0]]))
+    .attr('stroke', 'grey')
+    // .attr('marker-end', 'url(#arrow)')
+    .attr('fill', "none")
+    .attr("stroke-width", "1px");
+
+  // Text
+  svg.append('text')
+    .attr('id','annotationText')
+    .attr("x", 220)
+    .attr("y", 220)
+    .style('fill', 'grey')
+    .style("text-anchor", "middle")
+    // .style("font-weight", "bold")
+    .text("Placeholder");
 }
 
 
@@ -360,18 +417,35 @@ async function displayScene(sceneId){
 
   // Display legendBar
   curSel = d3.select('#legendBar');
-  curSel.style('height',sceneParams[SCENEID].legendBar_height)
-  curSel.style('width',sceneParams[SCENEID].legendBar_width)
+  curSel.style('height',sceneParams[SCENEID].legendBar_height);
+  curSel.style('width',sceneParams[SCENEID].legendBar_width);
 
   // Display (or hide!) individual legend entries
   d3.selectAll('.legendAfg').transition().duration(1000)
-    .style('opacity',sceneParams[SCENEID].legendAfg_opacity)
+    .style('opacity',sceneParams[SCENEID].legendAfg_opacity);
   d3.selectAll('.legendAus').transition().duration(1000)
-    .style('opacity',sceneParams[SCENEID].legendAus_opacity)
+    .style('opacity',sceneParams[SCENEID].legendAus_opacity);
 
   // Display (or hide!) chartTwo
   curSel = d3.select('#chartTwo');
-  curSel.style('display',sceneParams[SCENEID].chartTwo_displayMode)
+  curSel.style('display',sceneParams[SCENEID].chartTwo_displayMode);
+
+  // Update the annotation
+  curSel = d3.select('#annotationLine');
+  curSel
+    .transition()
+    .duration(1000)
+    .style('opacity',sceneParams[SCENEID].annotationOpacity)
+    .attr('d', d3.line()(sceneParams[SCENEID].annotationLineCoords));
+
+  curSel = d3.select('#annotationText');
+  curSel
+  .transition()
+  .duration(1000)
+  .style('opacity',sceneParams[SCENEID].annotationOpacity)
+  .text(sceneParams[SCENEID].annotationText)
+  .attr("x", sceneParams[SCENEID].annotationText_x)
+  .attr("y", sceneParams[SCENEID].annotationText_y);
 
 }
 
@@ -440,7 +514,6 @@ function updateChartTwo(){
     .duration(1000)
     .call(d3.axisLeft(y));
 
-
   // Update line paths
   svg.selectAll(".line")
   .data(DATA2_BY_COUNTRY)
@@ -455,6 +528,10 @@ function updateChartTwo(){
         .x(function(d) { return x(d.year); })
         .y(function(d) { return y(+d[selectedOption]); })
         (d[1])
-    })
+    });
 
+  // Update the indicator explanation text for the hover box
+  d3.select('#wellbeingExplanation')
+    .html(INDICATOR_TEXT[selectedOption]);
+  
 }
