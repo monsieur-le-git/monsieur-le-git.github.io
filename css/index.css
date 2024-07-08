@@ -35,7 +35,7 @@ div{
   font-family: Verdana;
   position:absolute;
   top: 5%;
-  left: 25%;
+  left: 28%;
   /* transform: translate(-50%, -50%); */
   margin: 0px;
   font-size:large; 
@@ -57,15 +57,36 @@ select{
 }
 
 main{
-  height: 500px;
+  height: 530px;
   /* background-color: blue; */
   /* display: flex; */
+}
+
+.splashMain{
+  height: 606px;
 }
 
 header {
   text-align: left;
   align-content: left;
   padding-bottom: 20px;
+  /* height: 150px; */
+}
+
+#imgDiv{
+  display: inline-block;
+}
+
+img{
+  height:420px;
+  margin-top:30px;
+  margin-left:60px;
+}
+
+.caption{
+  margin-left:85px;
+  font-style:italic;
+  margin-top: 5px;
 }
 
 footer {
@@ -92,6 +113,11 @@ footer {
 #textPanel p{
   font-size:large;
   margin-top:10px;
+}
+
+.splashText{
+  display:inline-block;
+  width:530px;
 }
 
 button{
@@ -156,6 +182,11 @@ button{
   opacity:0;
 }
 
+li{
+  font-size:x-large;
+  margin:20px;
+}
+
 #indicatorExplanationHoverBox{
   background-color: darkgrey;
   width: 90%;
@@ -186,6 +217,16 @@ button{
   top: 60px;
   left: 20%;
   z-index: 100;
+}
+
+#buttonPrev{
+  margin-left: 16px;
+}
+
+#buttonStart{
+  font-size: xx-large;
+  border-width: 5px;
+  margin-top: 0px;
 }
 
 /* CARRYOVER FROM PREV ASSIG */

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>sjhobbs2 CS416 NarVis</title>
+	<link rel="stylesheet" href="css/index.css">
+  <script src='https://d3js.org/d3.v6.min.js'></script>
+  <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+  <script src='js/index.js'></script>
+</head>
+<body onload="init()">
+	<div id="wrapper">
+		<header>
+			<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
+			<h1> Happiness & Wellbeing trends: Australia vs the Extremes</h1>
+			<h2> What were the most, and least happy countries in 2023? Where does Australia sit?</h2>
+			<nav>
+				<button id="buttonHome" onclick="window.location.href='index.html'">Home</button>
+				<button id="buttonPrev" onclick="requestScene('prevScene')">Prev</button>
+				<button id="button1" onclick="requestScene(1)">1</button>
+				<button id="button2" onclick="requestScene(2)">2</button>
+				<button id="button3" onclick="requestScene(3)">3</button>
+				<button id="button4" onclick="requestScene(4)">4</button>
+				<button id="buttonNext" onclick="requestScene('nextScene')">Next</button>
+			</nav>
+		</header>
+		<main>
+			<!-- The next divs aren't all on one line, so there's a mysterious tiny gap when they're rendered as inline-block -->
+			<div id="textPanel"></div>
+			<div id="chartOne">
+				<p class="chartTitle">Cantril Life Ladder Score</p>
+				<div id="ladderExplanation" class="textBoxCentred">
+					National average of response to the question:
+					“Please imagine a ladder, with steps numbered from 0 at the bottom to 10 at the top. 
+					The top of the ladder represents the best possible life for you and the bottom of the 
+					ladder represents the worst possible life for you. On which step of the ladder would 
+					you say you personally feel you stand at this time?”
+				</div>
+			</div>
+			<div id="legendBar">
+				<div id="legend">
+					<div class="legendFin">Finland</div>
+					<div class="legendAfg">Afghanistan</div>
+					<div class="legendAus">Australia</div>
+				</div>
+				<div id="indicatorExplanationHoverBox" class="textBoxCentred">
+					<p>Hover your mouse over this box to see an explanation of indicator metrics</p>
+				</div>
+			</div>
+			<div id="chartTwo">
+				<select id="wellbeingIndicator" name="wellbeingIndicator" class="chartTitle" onchange="updateChartTwo()">
+					<option value="gdp">Log GDP per capita</option>
+					<option value="social">Social support</option>
+					<option value="lifeexp">Life expectancy</option>
+					<option value="freechoice">Freedom to make life choices</option>
+					<option value="generosity">Generosity</option>
+					<option value="corruption">Perceptions of corruption</option>
+					<option value="posaffect">Positive affect</option>
+					<option value="negaffect">Negative affect</option>
+				</select>
+				<div id="wellbeingExplanation" class="textBoxCentred">
+					PLACEHOLDER Wellbeing Explanation
+				</div>
+			</div>
+		</main>
+		<footer>
+			Dataset: World Happiness Report 2024, <a href ='https://happiness-report.s3.amazonaws.com/2024/DataForTable2.1.xls'>"Data for Table 2.1"</a>. Explanations of Indicator metrics are taken from <a href="https://happiness-report.s3.amazonaws.com/2024/Ch2+Appendix.pdf">"Statistical Appendix 1 for Chapter 2"</a>.
+		</footer>
+	</div>
+	
+</body>
+</html>
