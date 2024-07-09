@@ -106,9 +106,11 @@ footer {
 #textPanel{
   /* background-color: aqua; */
   word-wrap: break-word;
-  padding : 0px 0px 0px 0px; 
+  padding : 0px 0px 0px 20px; 
   box-sizing : border-box;
-  line-height:1.3
+  line-height:1.3;
+  /* margin-left:20px;
+  box-sizing:border-box; */
 }
 
 #textPanel p{
@@ -118,8 +120,8 @@ footer {
 
 .splashText{
   display:inline-block;
-  width:530px;
-  margin-left: 20px
+  width:550px;
+  /* margin-left: 20px */
 }
 
 button{
@@ -139,7 +141,7 @@ button{
   /* width: 200px; */
 }
 
-#chartOne svg{
+svg{
   /* background-color: antiquewhite; */
 }
 

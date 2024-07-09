@@ -10,16 +10,16 @@ let DATA2_BY_COUNTRY = {};   // Needs to be global because it's read during init
 let COLOUR_COUNTRY = d3.scaleOrdinal().range(['red','blue','green']);  // One for each country
 const BOX_OPACITY = 0.9; // For the boxes containing indicator explanation text
 
-const CHART_MARGIN = {top: 60, right: 20, bottom: 30, left: 60};
+const CHART_MARGIN = {top: 60, right: 20, bottom: 50, left: 60};
 const CHART_WIDTH = 410 - CHART_MARGIN.left - CHART_MARGIN.right;
-const CHART_HEIGHT = 410 - CHART_MARGIN.top - CHART_MARGIN.bottom;
+const CHART_HEIGHT = 430 - CHART_MARGIN.top - CHART_MARGIN.bottom;
 
 const INDICATOR_TEXT = {
   // The text to be displayed over Chart Two, explaining indicator metrics
   gdp : "Log GDP per capita is expressed in purchasing power parity (PPP) at constant 2017 international dollar prices.</option",
   social : 'National average of the binary responses (either 0 or 1) to the question "If you were in trouble, do you have relatives or friends you can count on to help you whenever you need them, or not?"',
   lifeexp : "Healthy life expectancies at birth are based on the data extracted from the World Health Organization’s (WHO) Global Health Observatory data repository (Last updated: 2020-12-04). The data at the source are available for the years 2000, 2010, 2015 and 2019. To match this report’s sample period, interpolation and extrapolation are used.",
-  freechoice : 'National average of responses to the GWP question “Are you satisfied or dissatisfied with your freedom to choose what you do with your life?”',
+  freechoice : 'National average of responses to the question “Are you satisfied or dissatisfied with your freedom to choose what you do with your life?”',
   generosity : 'The residual of regressing national average of response to the question “Have you donated money to a charity in the past month?” on GDP per capita.',
   corruption : 'National average of the survey responses to two questions in the GWP: “Is corruption widespread throughout the government or not” and “Is corruption widespread within businesses or not?” The overall perception is just the average of the two 0-or-1 responses. In case the perception of government corruption is missing, we use the perception of business corruption as the overall perception.',
   posaffect : 'National average of three positive affect measures: laugh, enjoyment and doing interesting things in the Gallup World Poll. These measures are the responses to the following three questions, respectively: “Did you smile or laugh a lot yesterday?”, and “Did you experience the following feelings during A LOT OF THE DAY yesterday? How about Enjoyment?”, “Did you learn or do something interesting yesterday?”',
@@ -37,7 +37,7 @@ const sceneParams = [];
 
 sceneParams[1] = {
   textPanel_displaymode : 'inline-block',
-  textPanel_HTML : '<h3><br><br><br>Finland = Most Happy</h3><br><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There appears to be a slight upwards trend.</p>',
+  textPanel_HTML : '<h3 style="color:green;opacity:0.7"><br><br><br>Finland = Most Happy</h3><br><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There appears to be a slight upwards trend.</p>',
 
   textPanel_height : '100%',
   chartOne_height : '100%',
@@ -68,7 +68,7 @@ sceneParams[1] = {
 // Define all the other scenes as a copy of Scene 1, then differences.
 
 sceneParams[2] = {...sceneParams[1]};
-sceneParams[2].textPanel_HTML = '<h3><br><br><br>Afghanistan = Least Happy</h3><br><p>Afghanistan is a nation in crisis.</p><p>The country has been in the grip of war and political turmoil for the past two decades.</p><p>Happiness has trended down sharply, with a temporary rebound in 2015-16.</p>';
+sceneParams[2].textPanel_HTML = '<h3 style="color:red;opacity:0.6"><br><br><br>Afghanistan = Least Happy</h3><br><p>Afghanistan is a nation in crisis.</p><p>The country has been in the grip of war and political turmoil for the past two decades.</p><p>Happiness has trended down sharply, with a temporary rebound in 2015-16.</p>';
 sceneParams[2].finTrace_strokeWidth = 1.5;
 sceneParams[2].afgTrace_strokeWidth = 10;
 sceneParams[2].afgTrace_visibility = 'visible';
@@ -79,7 +79,7 @@ sceneParams[2].annotationText_y = 180;
 sceneParams[2].annotationLineCoords = [[230, 240], [260, 187]];
 
 sceneParams[3] = {...sceneParams[1]};
-sceneParams[3].textPanel_HTML = '<h3><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
+sceneParams[3].textPanel_HTML = '<h3 style="color:blue;opacity:0.6"><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
 sceneParams[3].finTrace_strokeWidth = 1.5;
 sceneParams[3].ausTrace_strokeWidth = 10;
 sceneParams[3].afgTrace_visibility = 'visible';
@@ -136,14 +136,18 @@ async function init()
   await createChartOne();
   await createChartTwo();
   await createAnnotation();
+  await createTooltip();
 
   await displayScene(1);
 
-  // document.addEventListener("onload", celebrateLoad())
-  
-  obj=document.getElementById("indicatorExplanationHoverBox")
+  obj=document.getElementById("indicatorExplanationHoverBox");
   obj.addEventListener("mouseenter", displayIndicatorExplanation);
   obj.addEventListener("mouseleave", hideIndicatorExplanation); 
+  
+  obj=document.getElementById("ladderExplanation");
+  // obj.addEventListener("mouseenter", displayTooltip);
+  obj.addEventListener("mousemove", displayTooltip);
+  obj.addEventListener("mouseleave", hideTooltip); 
 }
 
 function createLegendBar(){
@@ -190,7 +194,12 @@ async function createChartOne(){
     .append("g")
       .attr("transform", `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
 
-  // group data by country (because we want one line per country)
+  // Append plot area rectangle
+  svg.append("rect")
+    .attr('id','chartOnePlotArea')
+    .attr('width', CHART_WIDTH)
+    .attr('height', CHART_HEIGHT)
+    .style('fill','white');
 
   // Add X axis (year)
   const x = d3.scaleLinear()
@@ -199,14 +208,30 @@ async function createChartOne(){
   svg.append("g")
     .attr("transform", `translate(0, ${CHART_HEIGHT})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));  // TODO: Amend to number of years
-  
 
+  // Add X axis label
+  svg.append("g")
+    .append("text")
+    .text("Year")
+    .attr("text-anchor", "middle")
+    .attr("x", CHART_WIDTH/2)
+    .attr("y", CHART_HEIGHT+40);
+  
   // Add Y axis (indicator value)
   const y = d3.scaleLinear()
     .domain([0, 10])
     .range([ CHART_HEIGHT, 0]);
   svg.append("g")
     .call(d3.axisLeft(y));
+
+  // Add Y axis label
+  svg.append("g")
+    .append("text")
+    .text("Indicator Value")
+    .attr("text-anchor", "middle")
+    .attr("x", -CHART_HEIGHT/2)
+    .attr("y",-27)
+    .attr("transform", "rotate(-90)");
 
   // Draw line for Finland
   svg.append("path")
@@ -265,6 +290,14 @@ async function createChartTwo(){
       .attr("id","chartTwo_plotArea")
       .attr("transform", `translate(${CHART_MARGIN.left},${CHART_MARGIN.top})`);
   
+  // Append plot area rectangle
+  svg.append("rect")
+    .attr('id','chartOnePlotArea')
+    .attr('width', CHART_WIDTH)
+    .attr('height', CHART_HEIGHT)
+    .style('fill','white');
+
+
   // Add X axis (year)
   const x = d3.scaleLinear()
     .domain(d3.extent(DATA2, function(d) { return d.year; }))
@@ -274,6 +307,14 @@ async function createChartTwo(){
     .attr("id","chartTwo_xAxis")
     .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));  // TODO: Amend to number of years
 
+  // Add X axis label
+  svg.append("g")
+    .append("text")
+    .text("Year")
+    .attr("text-anchor", "middle")
+    .attr("x", CHART_WIDTH/2)
+    .attr("y", CHART_HEIGHT+40);
+
   // Add Y axis (indicator value)
   const y = d3.scaleLinear()
     .domain([d3.min(DATA2, function(d) { return +d.gdp; }), d3.max(DATA2, function(d) { return +d.gdp; })])
@@ -281,7 +322,17 @@ async function createChartTwo(){
   svg.append("g")
     .attr("id","chartTwo_yAxis")
     .call(d3.axisLeft(y));
-  
+
+  // Add Y axis label
+  svg.append("g")
+    .append("text")
+    .text("Indicator Value")
+    .attr("text-anchor", "middle")
+    .attr("x", -CHART_HEIGHT/2)
+    .attr("y",-35)
+    .attr("transform", "rotate(-90)");
+
+
   // Draw the line
   svg.selectAll(".line")
       .data(DATA2_BY_COUNTRY)
@@ -323,6 +374,17 @@ async function createAnnotation(){
     .style('fill', 'grey')
     .style("text-anchor", "middle")
     .text("Placeholder");
+}
+
+async function createTooltip(){
+  d3.select('main')
+    .append('div')
+    .attr('id', 'tooltip')
+    .style('position','absolute')
+    .style('opacity', 0)
+    .style('fill','red')
+    .text('hello')
+    .style('color','red');
 }
 
 
@@ -510,6 +572,17 @@ function updateChartTwo(){
 
   // Update the indicator explanation text for the hover box
   d3.select('#wellbeingExplanation')
-    .html(INDICATOR_TEXT[selectedOption]);
-  
+    .html(INDICATOR_TEXT[selectedOption]); 
+}
+
+function displayTooltip(event, d){
+  d3.select('#tooltip')
+  .text("yes")
+  .style('opacity','1')
+  .style('left',event.pageX + 10 + "px")
+  .style('top',event.pageY + "px");
+}
+
+function hideTooltip(){
+  d3.select('#tooltip').style('opacity',0)
 }
