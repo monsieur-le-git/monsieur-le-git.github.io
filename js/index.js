@@ -37,7 +37,7 @@ const sceneParams = [];
 
 sceneParams[1] = {
   textPanel_displaymode : 'inline-block',
-  textPanel_HTML : '<h3 style="color:green;opacity:0.7"><br><br><br>Finland = Most Happy</h3><br><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There appears to be a slight upwards trend.</p>',
+  textPanel_HTML : "<h3 style='color:green;opacity:0.7'><br><br><br>Finland = Most Happy</h3><br><p>Finland has enjoyed consistently high happiness since 2008.</p><p>There doesn't appear to be much of a trend, but overall it may be trending slight upwards, given the highest value has occurred recently.</p>",
 
   textPanel_height : '100%',
   chartOne_height : '100%',
