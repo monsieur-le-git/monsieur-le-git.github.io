@@ -11,19 +11,24 @@
 <body onload="init()">
 	<div id="wrapper">
 		<header>
-			<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
-			<h1> Happiness & Wellbeing trends: Australia vs the Extremes</h1>
-			<h2> What were the most, and least happy countries in 2023? Where does Australia sit?</h2>
-			<nav>
-				<button id="buttonHome" onclick="window.location.href='index.html'">Home</button>
-				<button id="buttonPrev" onclick="requestScene('prevScene')">Prev</button>
-				<button id="button1" onclick="requestScene(1)">1</button>
-				<button id="button2" onclick="requestScene(2)">2</button>
-				<button id="button3" onclick="requestScene(3)">3</button>
-				<button id="button4" onclick="requestScene(4)">4</button>
-				<button id="buttonNext" onclick="requestScene('nextScene')">Next</button>
-			</nav>
+			<div class="surtitle">
+				<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
+			</div>
+			<div class="title">
+				<h1> Happiness & Wellbeing trends: Australia vs the Extremes</h1>
+				<h2> What were the most, and least happy countries in 2023? Where does Australia sit?</h2>
+			</div>
 		</header>
+		<nav>
+			<button id="buttonHome" onclick="window.location.href='index.html'">Home</button>
+			<button id="buttonPrev" onclick="requestScene('prevScene')">Prev</button>
+			<button id="button1" onclick="requestScene(1)">1</button>
+			<button id="button2" onclick="requestScene(2)">2</button>
+			<button id="button3" onclick="requestScene(3)">3</button>
+			<button id="button4" onclick="requestScene(4)">4</button>
+			<button id="buttonNext" onclick="requestScene('nextScene')">Next</button>
+		</nav>
+
 		<main>
 			<!-- The next divs aren't all on one line, so there's a mysterious tiny gap when they're rendered as inline-block -->
 			<div id="textPanel"></div>

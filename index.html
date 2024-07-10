@@ -11,8 +11,13 @@
 <body>
 	<div id="wrapper">
 		<header>
-			<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
-			<h1> Happiness & Wellbeing trends: Australia vs the Extremes</h1>
+			<div class="surtitle">
+				<p id="surtitle">CS416 Narrative Visualisation Project - Simon Hobbs, July 2024</p>
+			</div>
+			<div class="title">
+				<h1> Happiness & Wellbeing trends: Australia vs the Extremes</h1>
+				<h2> Based on the World Happiness Report 2024</h2>
+			</div>
 		</header>
 		<main class="splashMain">
 			<div id="textPanel" class="splashText">
@@ -33,9 +38,9 @@
 				<img src="img/happiness.jpg">
 				<p class="caption">Image credit: World Happiness Report, 2024</p>
 			</div>
-			<div class="textBoxCentred">
+			<div class="textBoxCentred startbar" class="startbar">
 				<button id="buttonStart" onclick="window.location.href='narvis.html'">Start</button>
-			</nav>
+			</div>
 		</main>
 		<footer>
 			Dataset: World Happiness Report 2024, <a href ='https://happiness-report.s3.amazonaws.com/2024/DataForTable2.1.xls'>"Data for Table 2.1"</a>. Explanations of Indicator metrics are taken from <a href="https://happiness-report.s3.amazonaws.com/2024/Ch2+Appendix.pdf">"Statistical Appendix 1 for Chapter 2"</a>.
