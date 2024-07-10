@@ -578,7 +578,7 @@ function updateChartTwo(){
 function displayTooltip(event, d){
   d3.select('#tooltip')
   .text("yes")
-  .style('opacity','1')
+  .style('opacity','0') // TODO: Set to 1
   .style('left',event.pageX + 10 + "px")
   .style('top',event.pageY + "px");
 }

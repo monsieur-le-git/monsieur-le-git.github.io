@@ -247,22 +247,22 @@ li{
   /* font-size:small; */
   opacity: 0;
   background-color: whitesmoke;
-  width: 75%;
-  height: 300px;
+  width: 80%;
+  height: 310px;
   position: absolute;
-  top: 60px;
-  left: 20%;
+  top: 64px;
+  left: 65px;
   z-index: 100;
 }
 
 #wellbeingExplanation{
   opacity: 0;
   background-color: whitesmoke;
-  width: 75%;
-  height: 300px;
+  width: 80%;
+  height: 310px;
   position: absolute;
-  top: 60px;
-  left: 20%;
+  top: 64px;
+  left: 65px;
   z-index: 100;
 }
 
