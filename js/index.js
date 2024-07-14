@@ -79,7 +79,7 @@ sceneParams[2].annotationText_y = 180;
 sceneParams[2].annotationLineCoords = [[230, 240], [260, 187]];
 
 sceneParams[3] = {...sceneParams[1]};
-sceneParams[3].textPanel_HTML = '<h3 style="color:blue;opacity:0.6"><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend.</p>';
+sceneParams[3].textPanel_HTML = '<h3 style="color:blue;opacity:0.6"><br><br><br>Australia = Very Happy</h3><br><p>Australia has enjoyed high, stable happiness in recent decades.</p><p>There appears to be a gradual downward trend, with happiness at its lowest point since 2008.</p>';
 sceneParams[3].finTrace_strokeWidth = 1.5;
 sceneParams[3].ausTrace_strokeWidth = 10;
 sceneParams[3].afgTrace_visibility = 'visible';
